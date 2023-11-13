@@ -12,36 +12,34 @@ int _printf(const char *format, ...)
 {
 va_list args;
 int count = 0;
-const char *ptr;
-char *str;
 va_start(args, format);
-for (ptr = format; *ptr != '\0'; ptr++)
+while (*format != '\0')
 {
-if (*ptr == '%')
+if (*format == '%' && *(format + 1) != '\0')
 {
-ptr++;
-switch (*ptr)
+format++;
+if (*format == 'c')
 {
-case 'c':
 count += putchar(va_arg(args, int));
-break;
-case 's':
-str = va_arg(args, char *);
-if (str == NULL)
-str = "(null)";
-count += printf("%s", str);
-break;
-case '%':
+}
+else if (*format == 's')
+{
+count += fputs(va_arg(args, char *), stdout);
+}
+else if (*format == '%')
+{
 count += putchar('%');
-break;
-default:
-count += putchar('%') + putchar(*ptr);
+}
+else
+{
+count += putchar('%') + putchar(*format);
 }
 }
 else
 {
-count += putchar(*ptr);
+count += putchar(*format);
 }
+format++;
 }
 va_end(args);
 return (count);
