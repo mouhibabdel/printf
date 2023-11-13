@@ -16,19 +16,23 @@ while (*format != '\0')
 if (*format == '%' && *(format + 1) != '\0')
 {
 format++;
-if (*format == 'c')
+handle_s_t handlers[] =
 {
-count += putchar(va_arg(args, int));
-}
-else if (*format == 's')
+{'c', h_char},
+{'s', h_string},
+{'%', h_percentage},
+};
+int found = 0;
+for (size_t i = 0; i < sizeof(handlers) / sizeof(handlers[0]); i++)
 {
-count += fputs(va_arg(args, char *), stdout);
-}
-else if (*format == '%')
+if (*format == handlers[i].sp_f)
 {
-count += putchar('%');
+count += handlers[i].f(args);
+found = 1;
+break;
 }
-else
+}
+if (!found)
 {
 count += putchar('%') + putchar(*format);
 }

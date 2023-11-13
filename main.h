@@ -4,6 +4,17 @@
 #include <stdarg.h>
 #include <unistd.h>
 #include <string.h>
+/**
+*struct handle - struct to handle char
+*@sp_f: handle some char
+*@f: the function associated
+*/
+typedef struct handle
+{
+	char sp_f;
+	int (*f)(va_list);
+} handle_s_t;
+
 int _printf(const char *format, ...);
 
 /* Task 1: Conversion specifiers - %d, %i */
