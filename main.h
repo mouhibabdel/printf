@@ -1,62 +1,114 @@
-#ifndef MAIN_H
-#define MAIN_H
+#ifndef PRINTF_H
+#define _PRINTF_H
 
 #include <stdarg.h>
+#include <stdio.h>
 #include <unistd.h>
-#include <string.h>
+#include <limits.h>
+#include <stdlib.h>
+
+#define OUTPUT_BUF_SIZE 1024
+#define BUF_FLUSH -1
+
+#define NULL_STRING "(null)"
+#define PARAMS_INIT (0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+
+#define CONVERT LOWERCASE 1
+#define CONVERT_UNSIGNED 2
+
 /**
-*struct handle - struct to handle char
-*@sp_f: handle some char
-*@f: the function associated
+* struct parameters - parameters struct
+* @unsign: flag if unsigned value
+* @plus_flag: on if plus_flag specified
+* @space_flag: on if hashtag_flag specified
+* @hashtag_flag: on if flag specified
+* @zero_flag: on if flag specified
+*@minus_flag: on if flag specified
+
+*@width: field width specified
+*@precision: field precision specified
+
+*@h_modifier: on if h_modifier is specified
+*@l_modifier: on if 1 modifier is specified
 */
-typedef struct handle
+typedef struct parameters
 {
-	char sp_f;
-	int (*f)(va_list);
-} handle_s_t;
+unsigned int unsign : 1;
 
+unsigned int plus_flag : 1;
+unsigned int space_flag : 1;
+unsigned int hashtag_flag :1;
+unsigned int zero_flag : 1;
+unsigned int minus_flag : 1;
+
+unsigned int width;
+unsigned int precision;
+
+unsigned int h_modifier : 1;
+unsigned int l_modifier  : 1;
+} params_t;
+
+
+/**
+*struct specifier - Struct token
+*@specifier: format token
+*@f: The function associated
+*/
+
+typedef struct specifier
+{
+    
+char *specifier;
+int (*f) (va_list, params_t *);
+}specifier_t;
+/*put.c module */
+int _puts(char *str);
+int _putchar(int c);
+
+/* print_functions.c module */
+int print_char va_list ap, params_t *params);
+int print_int(va_list ap, params_t *params);
+int print_string(va_list ap, params_t *params);
+int print_percent(va_list ap, params_t *params);
+int print_s(va_list ap, params_t *params);
+
+/* number.c module */
+char *convert(long int num, int base, int flags, params_t * params);
+int print_unsigned(va_list ap, params_t *params);
+int print_address(va_list ap, params_t *params);
+
+/* specifier.c module */   
+int (*get specifier(char *s)) (va list ap, params_t *params);
+int get_print_func(char *s, va_list ap, params_t *params);
+int get_flag(char *s, params_t *params);
+int get_modifier(char *s, params_t *params);
+char *get_width(char *s, params_t *params, va_list ap);
+
+/* convert_number.c module */
+int print_hex(va_list ap, params_t *params);
+int print_HEX(va_list ap, params_t *params);
+int print_binary(va_list ap, params_t *params);
+int print_octal(va_list ap, params_t *params);
+
+/* simple printers.c module */
+int print_from_to(char *start, char *stop, char *except);
+int print_rev(va_list ap, params_t *params);
+int print_rot13(va_list ap, params_t *params);
+
+/* print_number.c module */
+int _isdigit(int c);
+int _strlen(char *s);
+int print_number(char *str, params_t *params);
+int print_number_right_shift(char *str, params_t *params);
+int print_number_left_shift(char *str, params_t *params);
+
+/* params.c module */
+void init_params(params_t *params, va list ap);
+
+/* string_fields.c modoule */
+char *get_precision(char *p, params_t *params, va_list ap);
+
+/* _prinf.c module */
 int _printf(const char *format, ...);
-
-/* Task 1: Conversion specifiers - %d, %i */
-void print_integer(va_list args);
-
-/* Task 2: Custom conversion specifier %b */
-void print_binary(unsigned int n);
-
-/* Task 3: Custom conversion specifier %b */
-void print_binary(va_list args);
-
-/* Task 4: Local buffer usage */
-void print_with_buffer(const char *format, va_list args);
-
-/* Task 5: Custom conversion specifier %S */
-void print_non_printable_string(const char *str);
-
-/* Task 6: Conversion specifier %p */
-void print_address(const void *p);
-
-
-/* Task 7: Handle flag characters: +, space, # */
-void print_with_flags(va_list args);
-
-/* Task 8: Handle length modifiers: l, h */
-void print_with_length_modifiers(va_list args);
-
-/* Task 9: Handle field width */
-void print_with_field_width(va_list args);
-
-/* Task 10: Handle precision */
-void print_with_precision(va_list args);
-
-/* Task 11: Handle the 0 flag character */
-void print_with_zero_flag(va_list args);
-
-/* Task 12: Handle the - flag character */
-void print_with_minus_flag(va_list args);
-/* Task 13: Custom conversion specifier %r */
-void print_reversed_string(const char *str);
-
-/* Task 14: Custom conversion specifier %R */
-void print_rot13_string(const char *str);
 
 #endif
